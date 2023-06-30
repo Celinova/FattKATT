@@ -12,23 +12,6 @@ using NSDotnet;
 using NSDotnet.Models;
 
 #region License
-/*
-FattKATT Manual triggering tool
-Copyright (C) 2022 Vleerian R
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
 #endregion
 
 var app = new CommandApp<FattKATTCommand>();
@@ -63,10 +46,10 @@ class FattKATTCommand : AsyncCommand<FattKATTCommand.Settings>
         var API = NSAPI.Instance;
         API.UserAgent = $"FatKATT/{VersionNumber} (By 20XX, Atagait@hotmail.com)";
         
-        // The splash was cut out of the main function for the sake of readability
+
         PrintSplash();
 
-        // Fetch version information from github
+
         Logger.Request("Checking for newer versions...");
         {
             HttpClient httpClient = new HttpClient();
@@ -161,11 +144,11 @@ class FattKATTCommand : AsyncCommand<FattKATTCommand.Settings>
         }
         #endregion
 
-        // The NTP timeserver is used because some people apparently don't have their system clock set properly
+
         ntpConnection = new NtpConnection("pool.ntp.org");
         int current_time = CurrentTimestamp();
 
-        // Fetch the lastupdate data for all the regions in the trigger list
+
         Logger.Info("Sorting triggers.");
         Logger.Info($"This will take ~{(Triggers.Count * PollSpeed) / 1000} seconds.");
         List<(double timestamp, string trigger)> Sorted_Triggers = new();
@@ -250,14 +233,6 @@ class FattKATTCommand : AsyncCommand<FattKATTCommand.Settings>
         return 0;
     }
 
-    /// <summary>
-    /// This method compares two semantic versioning tags to check which is higher
-    /// <returns type="int">0 if VerisonA is higher, 
-    /// 1 if VersionB is higher.
-    /// 2 if they are the same
-    /// 3 if there are less than 3 integer parts to the version
-    /// 4 if the version parts themselves are invalid</returns>
-    /// </summary>
     int CompareVersion(string VersionA, string VersionB)
     {
         // (StringSplitOptions)3 is shorthand for trim entries and remove empty entries
@@ -270,10 +245,6 @@ class FattKATTCommand : AsyncCommand<FattKATTCommand.Settings>
         return CompareVersionParts(PartsA, PartsB, 0);
     }
 
-    /// <summary>
-    /// This method compares parts of thw semantic versioning tags to check which is higher
-    /// <returns type="bool">True if VerisonA is higher, false if VersionB is higher</returns>
-    /// </summary>
     int CompareVersionParts(string[] PartsA, string[] PartsB, int index)
     {
         int ResultA, ResultB;
@@ -290,20 +261,12 @@ class FattKATTCommand : AsyncCommand<FattKATTCommand.Settings>
         return CompareVersionParts(PartsA, PartsB, ++index);
     }
 
-    /// <summary>
-    /// This method checks the X-ratelimit-requests-seen header and returns the value
-    /// </summary>
     int CheckRatelimit(HttpResponseMessage r)
     {
         string strRatelimitSeen = r.Headers.GetValues("X-ratelimit-requests-seen").First();
         return Int32.Parse(strRatelimitSeen);
     }
 
-    /// <summary>
-    /// I am told that a shocking number of people do not have their system time properly set
-    /// To that end, I poll the current UTC time through NTP to ensure accuracy.
-    /// <returns>The current epoch timestamp</returns>
-    /// </summary>
     int CurrentTimestamp()
     {
         var utcNow = ntpConnection.GetUtc(); 
@@ -313,27 +276,8 @@ class FattKATTCommand : AsyncCommand<FattKATTCommand.Settings>
 
     public void PrintSplash()
     {
-        AnsiConsole.MarkupLine("[red]██╗  ██╗ █████╗ ████████╗████████╗[/]");
-        AnsiConsole.MarkupLine("[red]██║ ██╔╝██╔══██╗╚══██╔══╝╚══██╔══╝[/]");
-        AnsiConsole.MarkupLine("[red]█████╔╝ ███████║   ██║      ██║   [/]");
-        AnsiConsole.MarkupLine("[red]██╔═██╗ ██╔══██║   ██║      ██║   [/]");
-        AnsiConsole.MarkupLine("[red]██║  ██╗██║  ██║   ██║      ██║   [/]");
-        AnsiConsole.MarkupLine("[red]╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝      ╚═╝   [/]");
         AnsiConsole.WriteLine("Khron and Atagait's Triggering Tool");
-        AnsiConsole.WriteLine("        |\\___/|");
-        AnsiConsole.WriteLine("        )     (  ");
-        AnsiConsole.WriteLine("       =\\     /=");
-        AnsiConsole.WriteLine("         )===(   ");
-        AnsiConsole.WriteLine("        /     \\");
-        AnsiConsole.WriteLine("        |     |");
-        AnsiConsole.WriteLine("       /       \\");
-        AnsiConsole.WriteLine("       \\       /");
-        AnsiConsole.WriteLine("_/\\_/\\_/\\__  _/_/\\_/\\_/\\_/\\_/\\_/\\_");
-        AnsiConsole.WriteLine("|  |  |  |( (  |  |  |  |  |  |  |");
-        AnsiConsole.WriteLine("|  |  |  | ) ) |  |  |  |  |  |  |");
-        AnsiConsole.WriteLine("|  |  |  |(_(  |  |  |  |  |  |  |");
-        AnsiConsole.WriteLine("|  |  |  |  |  |  |  |  |  |  |  |");
-        AnsiConsole.WriteLine("|  |  |  |  |  |  |  |  |  |  |  |");
+
         AnsiConsole.WriteLine($"FatKATT Version {VersionNumber}.");
         AnsiConsole.WriteLine($"This software is provided as-is, without warranty of any kind.");
     }
